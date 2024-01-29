@@ -26,17 +26,19 @@ jobs:
       env: 
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        NEW_VERSION: ${{ steps.version.outputs.version }}
       run: |
-        echo "NEW VERSION: $NEW_VERSION"
         echo "Iniciando login..."
         docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
         echo "Fin del login"
-    # - name: Build Docker Image
-    #   run: |
-    #     docker image build -t cirog/docker-graphql:0.0.2 .
-    #     docker image build -t cirog/docker-graphql:latest .
-    # - name: Push Docker image
-    #   run: |
-    #     docker push cirog/docker-graphql:0.0.2
-    #     docker push cirog/docker-graphql:latest
+    - name: Build Docker Image
+      env:
+        NEW_VERSION: ${{ steps.version.outputs.version }}
+      run: |
+        docker image build -t cirog/docker-graphql:$NEW_VERSION .
+        docker image build -t cirog/docker-graphql:latest .
+    - name: Push Docker image
+      env:
+        NEW_VERSION: ${{ steps.version.outputs.version }}
+      run: |
+        docker push cirog/docker-graphql:$NEW_VERSION
+        docker push cirog/docker-graphql:latest
